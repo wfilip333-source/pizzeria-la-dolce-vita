@@ -101,6 +101,11 @@ HTML_TEMPLATE = """
         
         .form-section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--primary); margin: 30px 0 20px 0; padding-bottom: 5px; border-bottom: 2px solid var(--primary); }
 
+        .success-box { background: #e8f8f5; border: 2px solid #27ae60; padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
+        .success-box i { font-size: 3rem; color: #27ae60; margin-bottom: 15px; }
+        .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #27ae60; margin-bottom: 10px; }
+        .success-box p { color: #2c3e50; font-size: 1.1rem; }
+
         .admin-panel-section { background: #fff3f2; border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; margin-top: 50px; }
         .app-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
@@ -145,10 +150,26 @@ HTML_TEMPLATE = """
         <p class="section-subtitle">Dołącz do zespołu La Dolce Vita i twórz z nami klimatyczne RP w Los Santos!</p>
         
         <div class="form-container">
+            {% if success %}
+            <div class="success-box">
+                <i class="fa-solid fa-circle-check"></i>
+                <h3>Sukces!</h3>
+                <p>Podanie zostało wysłane pomyślnie, oczekuj na wynik na discordzie La Dolce Vita.</p>
+                <a href="/rekrutacja" class="btn" style="margin-top: 20px;">Wyślij kolejne podanie</a>
+            </div>
+            {% else %}
             <form action="/submit-application" method="POST">
                 
                 <div class="form-section-title">--- INFORMACJE OOC ---</div>
                 
+                <div class="form-group">
+                    <label>Nick na Discord</label>
+                    <input type="text" name="ooc_discord_nick" required placeholder="np. nick_discord">
+                </div>
+                <div class="form-group">
+                    <label>Discord ID</label>
+                    <input type="text" name="ooc_discord_id" required placeholder="np. 123456789012345678">
+                </div>
                 <div class="form-group">
                     <label>Wiek</label>
                     <input type="text" name="ooc_age" required placeholder="Twój wiek rzeczywisty">
@@ -199,6 +220,7 @@ HTML_TEMPLATE = """
 
                 <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">Wyślij Podanie</button>
             </form>
+            {% endif %}
 
             {% if session.get('is_admin') %}
             <div class="admin-panel-section">
@@ -206,7 +228,8 @@ HTML_TEMPLATE = """
                 {% if applications %}
                     {% for app in applications %}
                     <div class="app-card">
-                        <p><strong>ID:</strong> {{ app.id }} | <strong>Postać:</strong> {{ app.ic_name }} (OOC Wiek: {{ app.ooc_age }})</p>
+                        <p><strong>ID:</strong> {{ app.id }} | <strong>Postać:</strong> {{ app.ic_name }}</p>
+                        <p><strong>Discord:</strong> {{ app.ooc_discord_nick }} (ID: {{ app.ooc_discord_id }}) | <strong>OOC Wiek:</strong> {{ app.ooc_age }}</p>
                         <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
                         <p><strong>OOC - Doświadczenie:</strong> {{ app.ooc_experience }}</p>
                         <p><strong>OOC - Czas na grę:</strong> {{ app.ooc_time }} | <strong>Regulamin:</strong> {{ app.ooc_rules }}</p>
@@ -343,12 +366,15 @@ def index():
 
 @app.route('/rekrutacja')
 def rekrutacja():
-    return render_template_string(HTML_TEMPLATE, applications=applications)
+    success = request.args.get('success') == 'true'
+    return render_template_string(HTML_TEMPLATE, applications=applications, success=success)
 
 @app.route('/submit-application', methods=['POST'])
 def submit_application():
     new_app = {
         "id": applications[0]['id'] + 1 if applications else 1,
+        "ooc_discord_nick": request.form.get('ooc_discord_nick'),
+        "ooc_discord_id": request.form.get('ooc_discord_id'),
         "ooc_age": request.form.get('ooc_age'),
         "ooc_experience": request.form.get('ooc_experience'),
         "ooc_time": request.form.get('ooc_time'),
@@ -362,7 +388,7 @@ def submit_application():
         "ic_situation": request.form.get('ic_situation')
     }
     applications.insert(0, new_app)
-    return redirect(url_for('rekrutacja'))
+    return redirect(url_for('rekrutacja', success='true'))
 
 @app.route('/delete-application/<int:app_id>', methods=['POST'])
 def delete_application(app_id):
