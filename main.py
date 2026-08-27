@@ -34,7 +34,7 @@ HTML_TEMPLATE = """
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #c0392b; --primary-dark: #962d22; --accent: #d4ac0d; --dark: #1a1a1a; --light: #fdfbf7; --gray: #7f8c8d; }
+        :root { --primary: #c0392b; --primary-dark: #962d22; --accent: #d4ac0d; --dark: #1a1a1a; --light: #f7f4ed; --card-bg: #ffffff; --gray: #7f8c8d; }
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--light); color: var(--dark); line-height: 1.6; }
         
@@ -67,25 +67,25 @@ HTML_TEMPLATE = """
         .btn { display: inline-block; background-color: var(--primary); color: white; padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: 500; border: none; cursor: pointer; transition: background 0.3s; }
         .btn:hover { background-color: var(--primary-dark); }
         
-        section { padding: 80px 10%; }
+        section { padding: 80px 10%; background-color: var(--light); }
         .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 15px; color: var(--dark); }
         .section-subtitle { text-align: center; color: var(--gray); margin-bottom: 50px; font-size: 1.1rem; }
         
         .menu-image-container { text-align: center; max-width: 700px; margin: 0 auto; background: #111; padding: 15px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .menu-image-container img { width: 100%; height: auto; border-radius: 10px; }
 
-        .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
+        .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: var(--card-bg); border-radius: 15px; padding: 40px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
         .info-details ul { list-style: none; margin-top: 20px; }
         .info-details li { margin-bottom: 15px; display: flex; align-items: center; gap: 15px; font-size: 1.05rem; }
         .info-details li i { color: var(--primary); font-size: 1.2rem; width: 25px; }
         .map-placeholder { height: 350px; border-radius: 10px; overflow: hidden; position: relative; border: 2px solid #ddd; }
         .map-placeholder img { width: 100%; height: 100%; object-fit: cover; }
         
-        .reviews-section { background-color: #f7f4ed; }
+        .reviews-section { background-color: var(--light); }
         .rating-overview { text-align: center; margin-bottom: 30px; font-size: 1.3rem; font-weight: 600; }
         .rating-overview span { color: #d4ac0d; font-size: 1.8rem; }
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
-        .review-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; }
+        .review-card { background: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; }
         .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .review-author { font-weight: 600; }
         .stars { color: #d4ac0d; letter-spacing: 2px; }
@@ -93,10 +93,10 @@ HTML_TEMPLATE = """
         .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
         .delete-btn:hover { background: #c0392b; }
 
-        .form-container { background: white; max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .form-container { background: var(--card-bg); max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; background-color: #fff; }
         .form-group textarea { resize: vertical; height: 100px; }
         
         .form-section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--primary); margin: 30px 0 20px 0; padding-bottom: 5px; border-bottom: 2px solid var(--primary); }
@@ -110,10 +110,10 @@ HTML_TEMPLATE = """
         .success-box p { color: #2c3e50; font-size: 1.1rem; }
 
         .admin-panel-section { background: #fff3f2; border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; margin-top: 50px; }
-        .app-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .app-card { background: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
+        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
         .modal-content input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
 
         footer { background: var(--dark); color: white; text-align: center; padding: 30px; font-size: 0.9rem; }
@@ -154,7 +154,7 @@ HTML_TEMPLATE = """
     </header>
 
     {% if request.path == '/rekrutacja' %}
-    <section style="background-color: #f7f4ed;">
+    <section>
         <h2 class="section-title">Formularz Rekrutacyjny</h2>
         <p class="section-subtitle">Dołącz do zespołu La Dolce Vita i twórz z nami klimatyczne RP w Los Santos!</p>
         
