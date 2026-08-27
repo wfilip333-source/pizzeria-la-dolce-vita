@@ -38,7 +38,7 @@ HTML_TEMPLATE = """
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
-                        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover; 
+                        url('https://cdn.discordapp.com/attachments/1537171868388167901/1542652759562526872/tlo.jpg?ex=6a9202d6&is=6a90b156&hm=13681af929c503113093a010b39182c67d9fae6f0ef411c3dbbfac89df9aa1db&') no-repeat center center/cover; 
             color: white; min-height: 90vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative; 
         }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); position: fixed; width: 100%; top: 0; z-index: 1000; }
@@ -102,7 +102,7 @@ HTML_TEMPLATE = """
     <header>
         <nav>
             <div class="logo-area">
-                <img src="https://cdn.discordapp.com/attachments/1535405503109144726/1542567147803517070/ChatGPT_Image_24_sie_2026_20_20_53.png?ex=6a91b31b&is=6a90619b&hm=68b622543aeb6317230fdcb55559ffcf95d741b24ee18e1e4f2bd36475fddeaa&" alt="Logo" class="logo-img">
+                <img src="https://cdn.discordapp.com/attachments/1535405503109144726/1542567147803517070/ChatGPT_Image_24_sie_2026_20_20_53.png?ex=6a91b31b&is=6a90619b&hm=68b622543aeb6317230fdcb55559ffcf95d741b24ee18e1e4f2bd36475fddeaa&">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -128,7 +128,7 @@ HTML_TEMPLATE = """
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
         <div class="menu-image-container">
-            <img src="https://cdn.discordapp.com/attachments/1541512104614432842/1542502122577338479/content.png?ex=6a91768c&is=6a90250c&hm=d2992a0c9c509993a2af231ef6d37a93002ad46d2c982d02b3d953c77f927148&" alt="Menu La Dolce Vita">
+            <img src="https://cdn.discordapp.com/attachments/1541512104614432842/1542502122577338479/content.png?ex=6a91768c&is=6a90250c&hm=d2992a0c9c509993a2af231ef6d37a93002ad46d2c982d02b3d953c77f927148&">
         </div>
     </section>
 
@@ -141,12 +141,11 @@ HTML_TEMPLATE = """
                 <p>Nasz lokal znajduje się w świetnej lokalizacji niedaleko wybrzeża i molo w zachodnim Los Santos (lokalizacja zaznaczona kością na mapie).</p>
                 <ul>
                     <li><i class="fa-solid fa-location-dot"></i> <span>Del Perro / Plaża, Los Santos</span></li>
-                    <li><i class="fa-solid fa-clock"></i> <span>Codziennie: 12:00 – 00:00</span></li>
-                    <li><i class="fa-solid fa-phone"></i> <span>Tel: 555-DOLCE-VITA</span></li>
+                    <li><i class="fa-solid fa-clock"></i> <span>Czynne: Całodobowo (24/7)</span></li>
                 </ul>
             </div>
             <div class="map-placeholder">
-                <img src="https://cdn.discordapp.com/attachments/1541512104614432843/1542488327561683005/36873c94-a767-4e1c-9b13-fcc21fe45e01.png?ex=6a9169b3&is=6a901833&hm=2edb247931893c6f341e1852a86d8cabf2aa96c8596d452844956750ca9eff2b&" alt="Mapa Los Santos - Zaznaczona Kość">
+                <img src="https://cdn.discordapp.com/attachments/1541512104614432843/1542488327561683005/36873c94-a767-4e1c-9b13-fcc21fe45e01.png?ex=6a9169b3&is=6a901833&hm=2edb247931893c6f341e1852a86d8cabf2aa96c8596d452844956750ca9eff2b&">
             </div>
         </div>
     </section>
