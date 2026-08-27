@@ -22,13 +22,15 @@ reviews = [
     }
 ]
 
+applications = []
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizzeria - La Dolce Vita - Los Santos </title>
+    <title>La Dolce Vita | Pizzeria & Trattoria - Los Santos</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -91,12 +93,17 @@ HTML_TEMPLATE = """
         .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
         .delete-btn:hover { background: #c0392b; }
 
-        .review-form-container { background: white; max-width: 700px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .form-container { background: white; max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
-        .form-group textarea { resize: vertical; height: 120px; }
+        .form-group textarea { resize: vertical; height: 100px; }
         
+        .form-section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--primary); margin: 30px 0 20px 0; padding-bottom: 5px; border-bottom: 2px solid var(--primary); }
+
+        .admin-panel-section { background: #fff3f2; border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; margin-top: 50px; }
+        .app-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
         .modal-content input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
@@ -113,9 +120,10 @@ HTML_TEMPLATE = """
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
-                <li><a href="#menu">Menu</a></li>
-                <li><a href="#lokalizacja">Lokalizacja</a></li>
-                <li><a href="#opinie">Opinie</a></li>
+                <li><a href="/#menu">Menu</a></li>
+                <li><a href="/#lokalizacja">Lokalizacja</a></li>
+                <li><a href="/#opinie">Opinie</a></li>
+                <li><a href="/rekrutacja">Rekrutacja</a></li>
                 {% if session.get('is_admin') %}
                     <li><a href="/logout" class="admin-badge">Wyloguj (Admin)</a></li>
                 {% else %}
@@ -126,11 +134,99 @@ HTML_TEMPLATE = """
         <div class="hero-content">
             <h2>Autentyczny Smak Włoch w Sercu Los Santos</h2>
             <p>Ręcznie robiona pizza wypiekana w tradycyjnym piecu. Prawdziwe składniki i niepowtarzalny klimat.</p>
-            <a href="#menu" class="btn">Sprawdź Menu</a>
+            <a href="/#menu" class="btn">Sprawdź Menu</a>
         </div>
         <div style="height: 50px;"></div>
     </header>
 
+    {% if request.path == '/rekrutacja' %}
+    <section style="background-color: #f7f4ed;">
+        <h2 class="section-title">Formularz Rekrutacyjny</h2>
+        <p class="section-subtitle">Dołącz do zespołu La Dolce Vita i twórz z nami klimatyczne RP w Los Santos!</p>
+        
+        <div class="form-container">
+            <form action="/submit-application" method="POST">
+                
+                <div class="form-section-title">--- INFORMACJE OOC ---</div>
+                
+                <div class="form-group">
+                    <label>Wiek</label>
+                    <input type="text" name="ooc_age" required placeholder="Twój wiek rzeczywisty">
+                </div>
+                <div class="form-group">
+                    <label>Doświadczenie w Roleplay (gdzie i ile grałeś/aś)</label>
+                    <textarea name="ooc_experience" required placeholder="Opisz swoje doświadczenie..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Czas na grę (ile h tygodniowo)</label>
+                    <input type="text" name="ooc_time" required placeholder="np. 15-20h">
+                </div>
+                <div class="form-group">
+                    <label>Znajomość regulaminu (0/10)</label>
+                    <input type="text" name="ooc_rules" required placeholder="np. 9/10">
+                </div>
+
+                <div class="form-section-title">--- INFORMACJE IC ---</div>
+
+                <div class="form-group">
+                    <label>Imię i Nazwisko postaci</label>
+                    <input type="text" name="ic_name" required placeholder="np. Giovanni Rossi">
+                </div>
+                <div class="form-group">
+                    <label>Wiek postaci</label>
+                    <input type="text" name="ic_age" required placeholder="np. 28 lat">
+                </div>
+                <div class="form-group">
+                    <label>Numer telefonu</label>
+                    <input type="text" name="ic_phone" required placeholder="np. 555-1234">
+                </div>
+                <div class="form-group">
+                    <label>Doświadczenie</label>
+                    <input type="text" name="ic_exp" required placeholder="Poprzednie miejsca pracy itp.">
+                </div>
+                <div class="form-group">
+                    <label>Krótki opis postaci (cechy, historia)</label>
+                    <textarea name="ic_desc" required placeholder="Opisz swoją postać..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Dlaczego akurat nasza restauracja?</label>
+                    <textarea name="ic_why" required placeholder="Powód wyboru La Dolce Vita..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Sytuacja RP: Klient zaczyna robić awanturę i rzucać jedzeniem. Jak reaguje Twoja postać? (Opisz działania)</label>
+                    <textarea name="ic_situation" required placeholder="Opisz reakcję postaci krok po kroku..."></textarea>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">Wyślij Podanie</button>
+            </form>
+
+            {% if session.get('is_admin') %}
+            <div class="admin-panel-section">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--primary);">Panel Administratora: Nadesłane Podania</h3>
+                {% if applications %}
+                    {% for app in applications %}
+                    <div class="app-card">
+                        <p><strong>ID:</strong> {{ app.id }} | <strong>Postać:</strong> {{ app.ic_name }} (OOC Wiek: {{ app.ooc_age }})</p>
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
+                        <p><strong>OOC - Doświadczenie:</strong> {{ app.ooc_experience }}</p>
+                        <p><strong>OOC - Czas na grę:</strong> {{ app.ooc_time }} | <strong>Regulamin:</strong> {{ app.ooc_rules }}</p>
+                        <p><strong>IC - Wiek:</strong> {{ app.ic_age }} | <strong>Tel:</strong> {{ app.ic_phone }} | <strong>Doświadczenie:</strong> {{ app.ic_exp }}</p>
+                        <p><strong>IC - Opis:</strong> {{ app.ic_desc }}</p>
+                        <p><strong>IC - Dlaczego my:</strong> {{ app.ic_why }}</p>
+                        <p><strong>IC - Sytuacja RP:</strong> {{ app.ic_situation }}</p>
+                        <form action="/delete-application/{{ app.id }}" method="POST" style="margin-top: 15px;">
+                            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Usuń podanie</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Brak nadesłanych podań.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% else %}
     <section id="menu">
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
@@ -145,7 +241,7 @@ HTML_TEMPLATE = """
         <div class="info-container">
             <div class="info-details">
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 15px;">La Dolce Vita Los Santos</h3>
-                <p>Nasz lokal znajduje się w świetnej lokalizacji niedaleko wybrzeża i molo w zachodnim Los Santos (lokalizacja zaznaczona kością na mapie).</p>
+                <p>Nasz lokal znajduje się w świetnej lokalizacji niedaleko wybrzeża i molo w zachodnim Los Santos.</p>
                 <ul>
                     <li><i class="fa-solid fa-location-dot"></i> <span>Del Perro / Plaża, Los Santos</span></li>
                     <li><i class="fa-solid fa-clock"></i> <span>Czynne: Całodobowo (24/7)</span></li>
@@ -185,7 +281,7 @@ HTML_TEMPLATE = """
             {% endfor %}
         </div>
 
-        <div class="review-form-container">
+        <div class="form-container">
             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 20px; text-align: center;">Dodaj Swoją Opinię</h3>
             <form action="/add-review" method="POST">
                 <div class="form-group">
@@ -210,6 +306,7 @@ HTML_TEMPLATE = """
             </form>
         </div>
     </section>
+    {% endif %}
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
@@ -244,6 +341,36 @@ def index():
         total_reviews=len(reviews)
     )
 
+@app.route('/rekrutacja')
+def rekrutacja():
+    return render_template_string(HTML_TEMPLATE, applications=applications)
+
+@app.route('/submit-application', methods=['POST'])
+def submit_application():
+    new_app = {
+        "id": applications[0]['id'] + 1 if applications else 1,
+        "ooc_age": request.form.get('ooc_age'),
+        "ooc_experience": request.form.get('ooc_experience'),
+        "ooc_time": request.form.get('ooc_time'),
+        "ooc_rules": request.form.get('ooc_rules'),
+        "ic_name": request.form.get('ic_name'),
+        "ic_age": request.form.get('ic_age'),
+        "ic_phone": request.form.get('ic_phone'),
+        "ic_exp": request.form.get('ic_exp'),
+        "ic_desc": request.form.get('ic_desc'),
+        "ic_why": request.form.get('ic_why'),
+        "ic_situation": request.form.get('ic_situation')
+    }
+    applications.insert(0, new_app)
+    return redirect(url_for('rekrutacja'))
+
+@app.route('/delete-application/<int:app_id>', methods=['POST'])
+def delete_application(app_id):
+    if session.get('is_admin'):
+        global applications
+        applications = [a for a in applications if a['id'] != app_id]
+    return redirect(url_for('rekrutacja'))
+
 @app.route('/add-review', methods=['POST'])
 def add_review():
     name = request.form.get('name')
@@ -268,12 +395,12 @@ def login():
     password = request.form.get('password')
     if password == 'admin123':
         session['is_admin'] = True
-    return redirect(url_for('index') + '#opinie')
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/logout')
 def logout():
     session.pop('is_admin', None)
-    return redirect(url_for('index') + '#opinie')
+    return redirect(request.referrer or url_for('index'))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
