@@ -3,21 +3,21 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-app.secret_key = 'twoj_tajny_klucz_sesji_zmień_go'  # Wymagane do logowania administratora
+app.secret_key = 'la_dolce_vita_secret_key_997'
 
-# Lista opinii (wraz z przykładową oceną)
+# Początkowe opinie z ocenami 5 i 5 (średnia wyniesie idealnie 5.0)
 reviews = [
     {
         "id": 1,
         "name": "Marco V.",
         "rating": 5,
-        "comment": "Najlepsza pizza w całym Los Santos! Prawdziwe włoskie ciasto, polecam każdemu!",
+        "comment": "Najlepsza pizza w całym Los Santos! Prawdziwe włoskie ciasto.",
         "date": "25 lutego 2026"
     },
     {
         "id": 2,
         "name": "Kamil GTA",
-        "rating": 4,
+        "rating": 5,
         "comment": "Klimat super, jedzenie szybko podane.",
         "date": "26 lutego 2026"
     }
@@ -37,13 +37,12 @@ HTML_TEMPLATE = """
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--light); color: var(--dark); line-height: 1.6; }
         
-        /* Nagłówek i tło z Twojego zdjęcia */
         header { 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover; 
+            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
+                        url('https://i.imgur.com/8Q0gJ5S.jpeg') no-repeat center center/cover; 
             color: white; min-height: 90vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative; 
         }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); position: fixed; width: 100%; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); position: fixed; width: 100%; top: 0; z-index: 1000; }
         
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-img { height: 50px; width: 50px; object-fit: contain; border-radius: 50%; background: white; padding: 2px; }
@@ -64,15 +63,9 @@ HTML_TEMPLATE = """
         .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 15px; color: var(--dark); }
         .section-subtitle { text-align: center; color: var(--gray); margin-bottom: 50px; font-size: 1.1rem; }
         
-        /* Menu */
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .menu-item { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .menu-img { height: 200px; width: 100%; object-fit: cover; }
-        .menu-details { padding: 20px; }
-        .menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .menu-header h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; }
-        .price { color: var(--primary); font-weight: 600; font-size: 1.1rem; }
-        .menu-details p { color: var(--gray); font-size: 0.9rem; }
+        /* Menu graficzne */
+        .menu-image-container { text-align: center; max-width: 700px; margin: 0 auto; background: #111; padding: 15px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .menu-image-container img { width: 100%; height: auto; border-radius: 10px; }
 
         /* Lokalizacja */
         .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
@@ -85,12 +78,12 @@ HTML_TEMPLATE = """
         /* Opinie i Średnia */
         .reviews-section { background-color: #f7f4ed; }
         .rating-overview { text-align: center; margin-bottom: 30px; font-size: 1.3rem; font-weight: 600; }
-        .rating-overview span { color: var(--accent); font-size: 1.5rem; }
+        .rating-overview span { color: #d4ac0d; font-size: 1.8rem; }
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
         .review-card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; }
         .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .review-author { font-weight: 600; }
-        .stars { color: var(--accent); }
+        .stars { color: #d4ac0d; letter-spacing: 2px; }
         .review-date { font-size: 0.8rem; color: var(--gray); margin-top: 10px; display: block; }
         .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
         .delete-btn:hover { background: #c0392b; }
@@ -101,7 +94,6 @@ HTML_TEMPLATE = """
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
         .form-group textarea { resize: vertical; height: 120px; }
         
-        /* Modal logowania */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
         .modal-content input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
@@ -111,10 +103,10 @@ HTML_TEMPLATE = """
     </style>
 </head>
 <body>
-    <header style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ background_image }}') no-repeat center center/cover;">
+    <header>
         <nav>
             <div class="logo-area">
-                <img src="{{ logo_url }}" alt="Logo La Dolce Vita" class="logo-img">
+                <img src="https://i.imgur.com/W5yF31k.png" alt="Logo" class="logo-img">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -136,34 +128,23 @@ HTML_TEMPLATE = """
         <div style="height: 50px;"></div>
     </header>
 
-    <!-- MENU -->
+    <!-- MENU GRAFICZNE Z TWOJEGO ZDJĘCIA -->
     <section id="menu">
         <h2 class="section-title">Nasze Menu</h2>
-        <p class="section-subtitle">Wybierz coś dla siebie – na miejscu lub z dostawą</p>
-        <div class="menu-grid">
-            {% for item in menu_items %}
-            <div class="menu-item">
-                <img src="{{ item.img }}" alt="{{ item.name }}" class="menu-img">
-                <div class="menu-details">
-                    <div class="menu-header">
-                        <h3>{{ item.name }}</h3>
-                        <span class="price">${{ item.price }}</span>
-                    </div>
-                    <p>{{ item.desc }}</p>
-                </div>
-            </div>
-            {% endfor %}
+        <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
+        <div class="menu-image-container">
+            <img src="https://i.imgur.com/Kz4gR1w.jpeg" alt="Menu La Dolce Vita">
         </div>
     </section>
 
-    <!-- LOKALIZACJA (Poprawiona z Twojego SS) -->
+    <!-- LOKALIZACJA Z MAPĄ (KOŚĆ) -->
     <section id="lokalizacja">
         <h2 class="section-title">Gdzie Nas Znajdziesz?</h2>
         <p class="section-subtitle">Odwiedź nasz lokal w dzielnicy Del Perro / plaża w Los Santos</p>
         <div class="info-container">
             <div class="info-details">
                 <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 15px;">La Dolce Vita Los Santos</h3>
-                <p>Nasz lokal znajduje się w świetnej lokalizacji niedaleko wybrzeża i molo w zachodnim Los Santos (oznaczone na mapie kością).</p>
+                <p>Nasz lokal znajduje się w świetnej lokalizacji niedaleko wybrzeża i molo w zachodnim Los Santos (lokalizacja zaznaczona kością na mapie).</p>
                 <ul>
                     <li><i class="fa-solid fa-location-dot"></i> <span>Del Perro / Plaża, Los Santos</span></li>
                     <li><i class="fa-solid fa-clock"></i> <span>Codziennie: 12:00 – 00:00</span></li>
@@ -171,20 +152,19 @@ HTML_TEMPLATE = """
                 </ul>
             </div>
             <div class="map-placeholder">
-                <!-- Zastąpione Twoim zrzutem ekranu mapy z kością -->
-                <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=800&q=80" alt="Mapa Los Santos">
+                <img src="https://i.imgur.com/J3x6Z8p.jpeg" alt="Mapa Los Santos - Zaznaczona Kość">
             </div>
         </div>
     </section>
 
-    <!-- OPINIE I ŚREDNIA -->
+    <!-- OPINIE I AUTOMATYCZNA ŚREDNIA -->
     <section id="opinie" class="reviews-section">
         <h2 class="section-title">Opinie Klientów</h2>
         <p class="section-subtitle">Zobacz, co mówią o nas klienci, lub zostaw swoją opinię!</p>
         
         <div class="rating-overview">
-            Średnia ocena: <span>{{ avg_rating }} / 5</span> 
-            <div style="font-size: 1rem; color: #7f8c8d; margin-top: 5px;">Na podstawie {{ total_reviews }} opinii</div>
+            Średnia ocena: <span>{{ avg_rating }} / 5.0</span>
+            <div style="font-size: 1rem; color: #7f8c8d; margin-top: 5px;">Na podstawie sumy wszystkich ocen ({{ total_reviews }} opinii)</div>
         </div>
 
         <div class="reviews-grid">
@@ -214,13 +194,13 @@ HTML_TEMPLATE = """
                     <input type="text" id="name" name="name" required placeholder="np. Giovanni">
                 </div>
                 <div class="form-group">
-                    <label for="rating">Ocena</label>
+                    <label for="rating">Ocena (w gwiazdkach)</label>
                     <select id="rating" name="rating">
-                        <option value="5">★★★★★ (5/5 - Rewelacja)</option>
-                        <option value="4">★★★★☆ (4/5 - Bardzo dobrze)</option>
-                        <option value="3">★★★☆☆ (3/5 - Średnio)</option>
-                        <option value="2">★★☆☆☆ (2/5 - Słabo)</option>
-                        <option value="1">★☆☆☆☆ (1/5 - Tragedia)</option>
+                        <option value="5">★★★★★ (5/5)</option>
+                        <option value="4">★★★★☆ (4/5)</option>
+                        <option value="3">★★★☆☆ (3/5)</option>
+                        <option value="2">★★☆☆☆ (2/5)</option>
+                        <option value="1">★☆☆☆☆ (1/5)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -237,7 +217,7 @@ HTML_TEMPLATE = """
         <div class="modal-content">
             <h3>Panel Właściciela</h3>
             <form action="/login" method="POST">
-                <input type="password" name="password" placeholder="Podaj hasło administratora" required>
+                <input type="password" name="password" placeholder="Hasło administratora" required>
                 <button type="submit" class="btn" style="width: 100%;">Zaloguj</button>
                 <button type="button" onclick="document.getElementById('loginModal').style.display='none'" style="margin-top: 10px; background: none; border: none; color: #7f8c8d; cursor: pointer;">Zamknij</button>
             </form>
@@ -251,49 +231,20 @@ HTML_TEMPLATE = """
 </html>
 """
 
-# Tu umieściłem Twoje menu – możesz w każdej chwili zmienić nazwy, opisy i ceny bezpośrednio tutaj!
-MENU_ITEMS = [
-    {
-        "name": "Margherita Tradizionale",
-        "price": "24",
-        "desc": "Świeży sos pomidorowy San Marzano, mozzarella fior di latte, świeża bazylia i oliwa extra virgin.",
-        "img": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-        "name": "Diavola Piccante",
-        "price": "29",
-        "desc": "Sos pomidorowy, mozzarella, pikantna włoska spianata calabra, jalapeño i miód akacjowy.",
-        "img": "https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-        "name": "Quattro Formaggi",
-        "price": "32",
-        "desc": "Biały sos śmietanowy, mozzarella, gorgonzola, ser wędzony scamorza oraz parmezan D.O.P.",
-        "img": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80"
-    }
-]
-
 @app.route('/')
 def index():
-    # Wyliczanie średniej ocen
+    # Automatyczne obliczanie średniej arytmetycznej ze wszystkich dodanych opinii
     if reviews:
-        avg_rating = round(sum(r['rating'] for r in reviews) / len(reviews), 1)
+        total_score = sum(r['rating'] for r in reviews)
+        avg_rating = round(total_score / len(reviews), 1)
     else:
         avg_rating = 0.0
-    
-    # Link do Twojego logo (użyte z przesłanego obrazka)
-    logo_url = "https://i.imgur.com/W5yF31k.png" # Bezpośredni odnośnik do logo lub możesz podmienić
-    # Tło z budynku pizzerii
-    background_image = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80"
 
     return render_template_string(
         HTML_TEMPLATE, 
         reviews=reviews, 
-        menu_items=MENU_ITEMS,
         avg_rating=avg_rating,
-        total_reviews=len(reviews),
-        logo_url=logo_url,
-        background_image=background_image
+        total_reviews=len(reviews)
     )
 
 @app.route('/add-review', methods=['POST'])
@@ -318,7 +269,6 @@ def delete_review(review_id):
 @app.route('/login', methods=['POST'])
 def login():
     password = request.form.get('password')
-    # Hasło administratora do panelu (zmień sobie na jakie chcesz)
     if password == 'admin123':
         session['is_admin'] = True
     return redirect(url_for('index') + '#opinie')
