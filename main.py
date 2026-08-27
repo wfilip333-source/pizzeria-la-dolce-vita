@@ -101,6 +101,9 @@ HTML_TEMPLATE = """
         
         .form-section-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--primary); margin: 30px 0 20px 0; padding-bottom: 5px; border-bottom: 2px solid var(--primary); }
 
+        .recruit-info-banner { background: #fdf2e9; border-left: 5px solid var(--accent); padding: 20px; border-radius: 8px; margin-bottom: 30px; font-size: 1.05rem; color: #7d6608; line-height: 1.5; }
+        .recruit-info-banner i { margin-right: 8px; }
+
         .success-box { background: #e8f8f5; border: 2px solid #27ae60; padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
         .success-box i { font-size: 3rem; color: #27ae60; margin-bottom: 15px; }
         .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #27ae60; margin-bottom: 10px; }
@@ -146,10 +149,14 @@ HTML_TEMPLATE = """
 
     {% if request.path == '/rekrutacja' %}
     <section style="background-color: #f7f4ed;">
-        <h2 class="section-title">Formularz Rekrutacyjny</h2>
-        <p class="section-subtitle">Dołącz do zespołu La Dolce Vita i twórz z nami klimatyczne RP w Los Santos!</p>
+        <h2 class="section-title">Strefa Rekrutacji - Dołącz do Zespołu</h2>
+        <p class="section-subtitle">Jesteś w oficjalnej kategorii rekrutacyjnej pizzerii La Dolce Vita. Wypełnij formularz poniżej, aby spróbować swoich sił!</p>
         
         <div class="form-container">
+            <div class="recruit-info-banner">
+                <i class="fa-solid fa-circle-info"></i> <strong>Ważne informacje:</strong> Wszystkie nadesłane podania są dokładnie sprawdzane przez zarząd w ciągu <strong>48 godzin</strong>. Wynik rozpatrzenia Twojego zgłoszenia zostanie opublikowany na naszym oficjalnym Discordzie!
+            </div>
+
             {% if success %}
             <div class="success-box">
                 <i class="fa-solid fa-circle-check"></i>
