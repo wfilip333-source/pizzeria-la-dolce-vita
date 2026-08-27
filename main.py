@@ -102,7 +102,7 @@ HTML_TEMPLATE = """
     <header>
         <nav>
             <div class="logo-area">
-                <img src="https://i.ibb.co/689L54v/logo.png" alt="Logo" class="logo-img">
+                <img src="https://cdn.discordapp.com/attachments/1535405503109144726/1542567147803517070/ChatGPT_Image_24_sie_2026_20_20_53.png?ex=6a91b31b&is=6a90619b&hm=68b622543aeb6317230fdcb55559ffcf95d741b24ee18e1e4f2bd36475fddeaa&" alt="Logo" class="logo-img">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -128,7 +128,7 @@ HTML_TEMPLATE = """
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
         <div class="menu-image-container">
-            <img src="https://i.ibb.co/9v2mX3K/menu.jpg" alt="Menu La Dolce Vita">
+            <img src="https://cdn.discordapp.com/attachments/1541512104614432842/1542502122577338479/content.png?ex=6a91768c&is=6a90250c&hm=d2992a0c9c509993a2af231ef6d37a93002ad46d2c982d02b3d953c77f927148&" alt="Menu La Dolce Vita">
         </div>
     </section>
 
@@ -146,7 +146,7 @@ HTML_TEMPLATE = """
                 </ul>
             </div>
             <div class="map-placeholder">
-                <img src="https://i.ibb.co/3s6K91v/mapa.jpg" alt="Mapa Los Santos - Zaznaczona Kość">
+                <img src="https://cdn.discordapp.com/attachments/1541512104614432843/1542488327561683005/36873c94-a767-4e1c-9b13-fcc21fe45e01.png?ex=6a9169b3&is=6a901833&hm=2edb247931893c6f341e1852a86d8cabf2aa96c8596d452844956750ca9eff2b&" alt="Mapa Los Santos - Zaznaczona Kość">
             </div>
         </div>
     </section>
