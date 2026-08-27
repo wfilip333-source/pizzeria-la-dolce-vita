@@ -38,7 +38,7 @@ HTML_TEMPLATE = """
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
-                        url('/static/tlo.jpg') no-repeat center center/cover; 
+                        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover; 
             color: white; min-height: 90vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative; 
         }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); position: fixed; width: 100%; top: 0; z-index: 1000; }
@@ -102,7 +102,7 @@ HTML_TEMPLATE = """
     <header>
         <nav>
             <div class="logo-area">
-                <img src="/static/logo.png" alt="Logo" class="logo-img">
+                <img src="https://i.ibb.co/689L54v/logo.png" alt="Logo" class="logo-img">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -128,7 +128,7 @@ HTML_TEMPLATE = """
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
         <div class="menu-image-container">
-            <img src="/static/menu.jpg" alt="Menu La Dolce Vita">
+            <img src="https://i.ibb.co/9v2mX3K/menu.jpg" alt="Menu La Dolce Vita">
         </div>
     </section>
 
@@ -146,7 +146,7 @@ HTML_TEMPLATE = """
                 </ul>
             </div>
             <div class="map-placeholder">
-                <img src="/static/mapa.jpg" alt="Mapa Los Santos - Zaznaczona Kość">
+                <img src="https://i.ibb.co/3s6K91v/mapa.jpg" alt="Mapa Los Santos - Zaznaczona Kość">
             </div>
         </div>
     </section>
