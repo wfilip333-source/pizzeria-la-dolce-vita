@@ -29,7 +29,7 @@ HTML_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzeria - La Dolce Vita</title>
-    <link rel="icon" type="image/png" href="https://i.imgur.com/8Kt462B.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chef-hat.png">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -39,7 +39,7 @@ HTML_TEMPLATE = """
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
-                        url('https://i.imgur.com/W8N08J5.jpeg') no-repeat center center; 
+                        url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1920&q=80') no-repeat center center; 
             background-size: cover;
             color: white; 
             min-height: 90vh; 
@@ -110,7 +110,7 @@ HTML_TEMPLATE = """
     <header>
         <nav>
             <div class="logo-area">
-                <img src="https://i.imgur.com/8Kt462B.png" alt="Logo" class="logo-img">
+                <img src="https://images.unsplash.com/photo-1579718441688-14298dc3f1ef?auto=format&fit=crop&w=150&q=80" alt="Logo" class="logo-img">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -136,7 +136,7 @@ HTML_TEMPLATE = """
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
         <div class="menu-image-container">
-            <img src="https://i.imgur.com/Z4w26cE.png" alt="Menu La Dolce Vita">
+            <img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=800&q=80" alt="Menu La Dolce Vita">
         </div>
     </section>
 
@@ -153,7 +153,7 @@ HTML_TEMPLATE = """
                 </ul>
             </div>
             <div class="map-placeholder">
-                <img src="https://i.imgur.com/1G6098Q.png" alt="Mapa Los Santos">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80" alt="Mapa Los Santos">
             </div>
         </div>
     </section>
