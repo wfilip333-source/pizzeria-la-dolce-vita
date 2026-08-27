@@ -140,17 +140,23 @@ HTML_TEMPLATE = """
             </ul>
         </nav>
         <div class="hero-content">
-            <h2>Autentyczny Smak Włoch w Sercu Los Santos</h2>
-            <p>Ręcznie robiona pizza wypiekana w tradycyjnym piecu. Prawdziwe składniki i niepowtarzalny klimat.</p>
-            <a href="/#menu" class="btn">Sprawdź Menu</a>
+            {% if request.path == '/rekrutacja' %}
+                <h2 style="color: var(--accent); text-transform: uppercase; letter-spacing: 2px;">Rekrutacja do Zespołu</h2>
+                <p>Jesteś w oficjalnej kategorii rekrutacyjnej. Podania są sprawdzane w ciągu 48h, a wyniki pojawią się na naszym Discordzie!</p>
+                <a href="/#menu" class="btn">Wróć do strony głównej</a>
+            {% else %}
+                <h2>Autentyczny Smak Włoch w Sercu Los Santos</h2>
+                <p>Ręcznie robiona pizza wypiekana w tradycyjnym piecu. Prawdziwe składniki i niepowtarzalny klimat.</p>
+                <a href="/#menu" class="btn">Sprawdź Menu</a>
+            {% endif %}
         </div>
         <div style="height: 50px;"></div>
     </header>
 
     {% if request.path == '/rekrutacja' %}
     <section style="background-color: #f7f4ed;">
-        <h2 class="section-title">Strefa Rekrutacji - Dołącz do Zespołu</h2>
-        <p class="section-subtitle">Jesteś w oficjalnej kategorii rekrutacyjnej pizzerii La Dolce Vita. Wypełnij formularz poniżej, aby spróbować swoich sił!</p>
+        <h2 class="section-title">Formularz Rekrutacyjny</h2>
+        <p class="section-subtitle">Dołącz do zespołu La Dolce Vita i twórz z nami klimatyczne RP w Los Santos!</p>
         
         <div class="form-container">
             <div class="recruit-info-banner">
