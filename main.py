@@ -5,7 +5,6 @@ import os
 app = Flask(__name__)
 app.secret_key = 'la_dolce_vita_secret_key_997'
 
-# Początkowe opinie z ocenami 5 i 5 (średnia wyniesie idealnie 5.0)
 reviews = [
     {
         "id": 1,
@@ -39,7 +38,7 @@ HTML_TEMPLATE = """
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), 
-                        url('https://i.imgur.com/8Q0gJ5S.jpeg') no-repeat center center/cover; 
+                        url('/static/tlo.jpg') no-repeat center center/cover; 
             color: white; min-height: 90vh; display: flex; flex-direction: column; justify-content: space-between; text-align: center; position: relative; 
         }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); position: fixed; width: 100%; top: 0; z-index: 1000; }
@@ -63,11 +62,9 @@ HTML_TEMPLATE = """
         .section-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 15px; color: var(--dark); }
         .section-subtitle { text-align: center; color: var(--gray); margin-bottom: 50px; font-size: 1.1rem; }
         
-        /* Menu graficzne */
         .menu-image-container { text-align: center; max-width: 700px; margin: 0 auto; background: #111; padding: 15px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .menu-image-container img { width: 100%; height: auto; border-radius: 10px; }
 
-        /* Lokalizacja */
         .info-container { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
         .info-details ul { list-style: none; margin-top: 20px; }
         .info-details li { margin-bottom: 15px; display: flex; align-items: center; gap: 15px; font-size: 1.05rem; }
@@ -75,7 +72,6 @@ HTML_TEMPLATE = """
         .map-placeholder { height: 350px; border-radius: 10px; overflow: hidden; position: relative; border: 2px solid #ddd; }
         .map-placeholder img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Opinie i Średnia */
         .reviews-section { background-color: #f7f4ed; }
         .rating-overview { text-align: center; margin-bottom: 30px; font-size: 1.3rem; font-weight: 600; }
         .rating-overview span { color: #d4ac0d; font-size: 1.8rem; }
@@ -106,7 +102,7 @@ HTML_TEMPLATE = """
     <header>
         <nav>
             <div class="logo-area">
-                <img src="https://i.imgur.com/W5yF31k.png" alt="Logo" class="logo-img">
+                <img src="/static/logo.png" alt="Logo" class="logo-img">
                 <h1>La Dolce Vita</h1>
             </div>
             <ul class="nav-links">
@@ -128,16 +124,14 @@ HTML_TEMPLATE = """
         <div style="height: 50px;"></div>
     </header>
 
-    <!-- MENU GRAFICZNE Z TWOJEGO ZDJĘCIA -->
     <section id="menu">
         <h2 class="section-title">Nasze Menu</h2>
         <p class="section-subtitle">Oficjalne ceny i specjały La Dolce Vita</p>
         <div class="menu-image-container">
-            <img src="https://i.imgur.com/Kz4gR1w.jpeg" alt="Menu La Dolce Vita">
+            <img src="/static/menu.jpg" alt="Menu La Dolce Vita">
         </div>
     </section>
 
-    <!-- LOKALIZACJA Z MAPĄ (KOŚĆ) -->
     <section id="lokalizacja">
         <h2 class="section-title">Gdzie Nas Znajdziesz?</h2>
         <p class="section-subtitle">Odwiedź nasz lokal w dzielnicy Del Perro / plaża w Los Santos</p>
@@ -152,12 +146,11 @@ HTML_TEMPLATE = """
                 </ul>
             </div>
             <div class="map-placeholder">
-                <img src="https://i.imgur.com/J3x6Z8p.jpeg" alt="Mapa Los Santos - Zaznaczona Kość">
+                <img src="/static/mapa.jpg" alt="Mapa Los Santos - Zaznaczona Kość">
             </div>
         </div>
     </section>
 
-    <!-- OPINIE I AUTOMATYCZNA ŚREDNIA -->
     <section id="opinie" class="reviews-section">
         <h2 class="section-title">Opinie Klientów</h2>
         <p class="section-subtitle">Zobacz, co mówią o nas klienci, lub zostaw swoją opinię!</p>
@@ -212,7 +205,6 @@ HTML_TEMPLATE = """
         </div>
     </section>
 
-    <!-- Modal logowania administratora -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <h3>Panel Właściciela</h3>
@@ -233,7 +225,6 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
-    # Automatyczne obliczanie średniej arytmetycznej ze wszystkich dodanych opinii
     if reviews:
         total_score = sum(r['rating'] for r in reviews)
         avg_rating = round(total_score / len(reviews), 1)
