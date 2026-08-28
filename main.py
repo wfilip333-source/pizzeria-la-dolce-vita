@@ -1,28 +1,12 @@
-from flask import Flask, render_template_string, request, redirect, url_for, session
-from datetime import datetime
+from flask import Flask, render_template_string, request, redirect, url_for
 import os
-import json
+import requests
 
 app = Flask(__name__)
 app.secret_key = 'la_dolce_vita_secret_key_997'
 
-REVIEWS_FILE = 'reviews.json'
-
-def load_reviews():
-    if os.path.exists(REVIEWS_FILE):
-        try:
-            with open(REVIEWS_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            return []
-    return []
-
-def save_reviews(reviews_list):
-    with open(REVIEWS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(reviews_list, f, ensure_ascii=False, indent=4)
-
-reviews = load_reviews()
-applications = []
+# TUTAJ WKLEJ SWÓJ LINK DO WEBHOOKA Z DISCORDA:
+DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/TWOJ_WEBHOOK_ID/TWOJ_WEBHOOK_TOKEN'
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -59,7 +43,6 @@ HTML_TEMPLATE = """
         .nav-links { list-style: none; display: flex; gap: 25px; align-items: center; }
         .nav-links a { color: white; text-decoration: none; transition: color 0.3s; font-weight: 500; }
         .nav-links a:hover { color: var(--accent); }
-        .admin-badge { background: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; }
 
         .hero-content { margin: auto; max-width: 800px; padding: 0 20px; }
         .hero-content h2 { font-family: 'Playfair Display', serif; font-size: 3.2rem; margin-bottom: 20px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
@@ -80,18 +63,6 @@ HTML_TEMPLATE = """
         .info-details li i { color: var(--primary); font-size: 1.2rem; width: 25px; }
         .map-placeholder { height: 350px; border-radius: 10px; overflow: hidden; position: relative; border: 2px solid #ddd; }
         .map-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .reviews-section { background-color: var(--light); }
-        .rating-overview { text-align: center; margin-bottom: 30px; font-size: 1.3rem; font-weight: 600; }
-        .rating-overview span { color: #d4ac0d; font-size: 1.8rem; }
-        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px; }
-        .review-card { background: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); position: relative; }
-        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .review-author { font-weight: 600; }
-        .stars { color: #d4ac0d; letter-spacing: 2px; }
-        .review-date { font-size: 0.8rem; color: var(--gray); margin-top: 10px; display: block; }
-        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; margin-top: 10px; }
-        .delete-btn:hover { background: #c0392b; }
 
         .form-container { background: var(--card-bg); max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         .form-group { margin-bottom: 20px; }
@@ -109,13 +80,6 @@ HTML_TEMPLATE = """
         .success-box h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #27ae60; margin-bottom: 10px; }
         .success-box p { color: #2c3e50; font-size: 1.1rem; }
 
-        .admin-panel-section { background: #fff3f2; border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; margin-top: 50px; }
-        .app-card { background: var(--card-bg); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card-bg); padding: 30px; border-radius: 10px; width: 300px; text-align: center; }
-        .modal-content input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 5px; }
-
         footer { background: var(--dark); color: white; text-align: center; padding: 30px; font-size: 0.9rem; }
         @media(max-width: 768px) { .info-container { grid-template-columns: 1fr; } .nav-links { display: none; } .hero-content h2 { font-size: 2.2rem; } }
     </style>
@@ -130,20 +94,14 @@ HTML_TEMPLATE = """
             <ul class="nav-links">
                 <li><a href="/#menu">Menu</a></li>
                 <li><a href="/#lokalizacja">Lokalizacja</a></li>
-                <li><a href="/#opinie">Opinie</a></li>
                 <li><a href="/rekrutacja">Rekrutacja</a></li>
-                {% if session.get('is_admin') %}
-                    <li><a href="/logout" class="admin-badge">Wyloguj (Admin)</a></li>
-                {% else %}
-                    <li><a href="#" onclick="document.getElementById('loginModal').style.display='flex'; return false;">Panel Administratora</a></li>
-                {% endif %}
             </ul>
         </nav>
         <div class="hero-content">
             {% if request.path == '/rekrutacja' %}
                 <h2 style="color: var(--accent); text-transform: uppercase; letter-spacing: 2px;">Rekrutacja do Zespołu</h2>
                 <p>Jesteś w oficjalnej kategorii rekrutacyjnej. Podania są sprawdzane w ciągu 48h, a wyniki pojawią się na naszym Discordzie!</p>
-                <a href="/#menu" class="btn">Wróć do strony głównej</a>
+                <a href="/" class="btn">Wróć do strony głównej</a>
             {% else %}
                 <h2>Autentyczny Smak Włoch w Sercu Los Santos</h2>
                 <p>Ręcznie robiona pizza wypiekana w tradycyjnym piecu. Prawdziwe składniki i niepowtarzalny klimat.</p>
@@ -160,14 +118,14 @@ HTML_TEMPLATE = """
         
         <div class="form-container">
             <div class="recruit-info-banner">
-                <i class="fa-solid fa-circle-info"></i> <strong>Ważne informacje:</strong> Wszystkie nadesłane podania są dokładnie sprawdzane przez zarząd w ciągu <strong>48 godzin</strong>. Wynik rozpatrzenia Twojego zgłoszenia zostanie opublikowany na naszym oficjalnym Discordzie!
+                <i class="fa-solid fa-circle-info"></i> <strong>Ważne informacje:</strong> Wszystkie nadesłane podania trafiają bezpośrednio do zarządu na Discordzie i są sprawdzane w ciągu <strong>48 godzin</strong>.
             </div>
 
             {% if success %}
             <div class="success-box">
                 <i class="fa-solid fa-circle-check"></i>
                 <h3>Sukces!</h3>
-                <p>Podanie zostało wysłane pomyślnie, oczekuj na wynik na discordzie La Dolce Vita.</p>
+                <p>Podanie zostało wysłane pomyślnie na Discorda La Dolce Vita. Oczekuj na wynik!</p>
                 <a href="/rekrutacja" class="btn" style="margin-top: 20px;">Wyślij kolejne podanie</a>
             </div>
             {% else %}
@@ -234,32 +192,6 @@ HTML_TEMPLATE = """
                 <button type="submit" class="btn" style="width: 100%; margin-top: 20px;">Wyślij Podanie</button>
             </form>
             {% endif %}
-
-            {% if session.get('is_admin') %}
-            <div class="admin-panel-section">
-                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--primary);">Panel Administratora: Nadesłane Podania</h3>
-                {% if applications %}
-                    {% for app in applications %}
-                    <div class="app-card">
-                        <p><strong>ID:</strong> {{ app.id }} | <strong>Postać:</strong> {{ app.ic_name }}</p>
-                        <p><strong>Discord:</strong> {{ app.ooc_discord_nick }} (ID: {{ app.ooc_discord_id }}) | <strong>OOC Wiek:</strong> {{ app.ooc_age }}</p>
-                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;">
-                        <p><strong>OOC - Doświadczenie:</strong> {{ app.ooc_experience }}</p>
-                        <p><strong>OOC - Czas na grę:</strong> {{ app.ooc_time }} | <strong>Regulamin:</strong> {{ app.ooc_rules }}</p>
-                        <p><strong>IC - Wiek:</strong> {{ app.ic_age }} | <strong>Tel:</strong> {{ app.ic_phone }} | <strong>Doświadczenie:</strong> {{ app.ic_exp }}</p>
-                        <p><strong>IC - Opis:</strong> {{ app.ic_desc }}</p>
-                        <p><strong>IC - Dlaczego my:</strong> {{ app.ic_why }}</p>
-                        <p><strong>IC - Sytuacja RP:</strong> {{ app.ic_situation }}</p>
-                        <form action="/delete-application/{{ app.id }}" method="POST" style="margin-top: 15px;">
-                            <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Usuń podanie</button>
-                        </form>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Brak nadesłanych podań.</p>
-                {% endif %}
-            </div>
-            {% endif %}
         </div>
     </section>
     {% else %}
@@ -288,76 +220,7 @@ HTML_TEMPLATE = """
             </div>
         </div>
     </section>
-
-    <section id="opinie" class="reviews-section">
-        <h2 class="section-title">Opinie Klientów</h2>
-        <p class="section-subtitle">Zobacz, co mówią o nas klienci, lub zostaw swoją opinię!</p>
-        
-        <div class="rating-overview">
-            Średnia ocena: <span>{{ avg_rating }} / 5.0</span>
-            <div style="font-size: 1rem; color: #7f8c8d; margin-top: 5px;">Na podstawie sumy wszystkich ocen ({{ total_reviews }} opinii)</div>
-        </div>
-
-        <div class="reviews-grid">
-            {% if reviews %}
-                {% for review in reviews %}
-                <div class="review-card">
-                    <div class="review-header">
-                        <span class="review-author">{{ review.name }}</span>
-                        <span class="stars">{% for i in range(review.rating) %}★{% endfor %}</span>
-                    </div>
-                    <p>{{ review.comment }}</p>
-                    <span class="review-date"><i class="fa-regular fa-calendar"></i> {{ review.date }}</span>
-                    
-                    {% if session.get('is_admin') %}
-                    <form action="/delete-review/{{ review.id }}" method="POST" style="margin-top: 10px;">
-                        <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Usuń opinię</button>
-                    </form>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            {% else %}
-                <p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">Brak opinii. Bądź pierwszy i dodaj swoją!</p>
-            {% endif %}
-        </div>
-
-        <div class="form-container">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 20px; text-align: center;">Dodaj Swoją Opinię</h3>
-            <form action="/add-review" method="POST">
-                <div class="form-group">
-                    <label for="name">Twoje Imię / Pseudonim</label>
-                    <input type="text" id="name" name="name" required placeholder="np. Giovanni">
-                </div>
-                <div class="form-group">
-                    <label for="rating">Ocena (w gwiazdkach)</label>
-                    <select id="rating" name="rating">
-                        <option value="5">★★★★★ (5/5)</option>
-                        <option value="4">★★★★☆ (4/5)</option>
-                        <option value="3">★★★☆☆ (3/5)</option>
-                        <option value="2">★★☆☆☆ (2/5)</option>
-                        <option value="1">★☆☆☆☆ (1/5)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="comment">Twoja opinia</label>
-                    <textarea id="comment" name="comment" required placeholder="Napisz coś o jedzeniu..."></textarea>
-                </div>
-                <button type="submit" class="btn" style="width: 100%;">Opublikuj Opinię</button>
-            </form>
-        </div>
-    </section>
     {% endif %}
-
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h3>Panel Właściciela</h3>
-            <form action="/login" method="POST">
-                <input type="password" name="password" placeholder="Hasło administratora" required>
-                <button type="submit" class="btn" style="width: 100%;">Zaloguj</button>
-                <button type="button" onclick="document.getElementById('loginModal').style.display='none'" style="margin-top: 10px; background: none; border: none; color: #7f8c8d; cursor: pointer;">Zamknij</button>
-            </form>
-        </div>
-    </div>
 
     <footer>
         <p>&copy; 2026 Pizzeria La Dolce Vita | Los Santos. Wszelkie prawa zastrzeżone.</p>
@@ -368,89 +231,62 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
-    global reviews
-    reviews = load_reviews()
-    if reviews:
-        total_score = sum(r['rating'] for r in reviews)
-        avg_rating = round(total_score / len(reviews), 1)
-    else:
-        avg_rating = 0.0
-
-    return render_template_string(
-        HTML_TEMPLATE, 
-        reviews=reviews, 
-        avg_rating=avg_rating,
-        total_reviews=len(reviews)
-    )
+    return render_template_string(HTML_TEMPLATE)
 
 @app.route('/rekrutacja')
 def rekrutacja():
     success = request.args.get('success') == 'true'
-    return render_template_string(HTML_TEMPLATE, applications=applications, success=success)
+    return render_template_string(HTML_TEMPLATE, success=success)
 
 @app.route('/submit-application', methods=['POST'])
 def submit_application():
-    new_app = {
-        "id": applications[0]['id'] + 1 if applications else 1,
-        "ooc_discord_nick": request.form.get('ooc_discord_nick'),
-        "ooc_discord_id": request.form.get('ooc_discord_id'),
-        "ooc_age": request.form.get('ooc_age'),
-        "ooc_experience": request.form.get('ooc_experience'),
-        "ooc_time": request.form.get('ooc_time'),
-        "ooc_rules": request.form.get('ooc_rules'),
-        "ic_name": request.form.get('ic_name'),
-        "ic_age": request.form.get('ic_age'),
-        "ic_phone": request.form.get('ic_phone'),
-        "ic_exp": request.form.get('ic_exp'),
-        "ic_desc": request.form.get('ic_desc'),
-        "ic_why": request.form.get('ic_why'),
-        "ic_situation": request.form.get('ic_situation')
-    }
-    applications.insert(0, new_app)
-    return redirect(url_for('rekrutacja', success='true'))
-
-@app.route('/delete-application/<int:app_id>', methods=['POST'])
-def delete_application(app_id):
-    if session.get('is_admin'):
-        global applications
-        applications = [a for a in applications if a['id'] != app_id]
-    return redirect(url_for('rekrutacja'))
-
-@app.route('/add-review', methods=['POST'])
-def add_review():
-    name = request.form.get('name')
-    rating = int(request.form.get('rating', 5))
-    comment = request.form.get('comment')
-    date_str = datetime.now().strftime("%d %B %Y")
+    # Pobieramy dane z formularza
+    discord_nick = request.form.get('ooc_discord_nick')
+    discord_id = request.form.get('ooc_discord_id')
+    ooc_age = request.form.get('ooc_age')
+    ooc_exp = request.form.get('ooc_experience')
+    ooc_time = request.form.get('ooc_time')
+    ooc_rules = request.form.get('ooc_rules')
     
-    if name and comment:
-        global reviews
-        reviews = load_reviews()
-        new_id = reviews[0]['id'] + 1 if reviews else 1
-        reviews.insert(0, {"id": new_id, "name": name, "rating": rating, "comment": comment, "date": date_str})
-        save_reviews(reviews)
-    return redirect(url_for('index') + '#opinie')
+    ic_name = request.form.get('ic_name')
+    ic_age = request.form.get('ic_age')
+    ic_phone = request.form.get('ic_phone')
+    ic_exp = request.form.get('ic_exp')
+    ic_desc = request.form.get('ic_desc')
+    ic_why = request.form.get('ic_why')
+    ic_situation = request.form.get('ic_situation')
 
-@app.route('/delete-review/<int:review_id>', methods=['POST'])
-def delete_review(review_id):
-    if session.get('is_admin'):
-        global reviews
-        reviews = load_reviews()
-        reviews = [r for r in reviews if r['id'] != review_id]
-        save_reviews(reviews)
-    return redirect(url_for('index') + '#opinie')
+    # Treść wiadomości wysyłana na Discorda
+    discord_message = {
+        "content": "🚨 **Nowe podanie do La Dolce Vita!** 🚨",
+        "embeds": [
+            {
+                "title": f"Postać IC: {ic_name}",
+                "color": 12632256,
+                "fields": [
+                    {"name": "👤 OOC Discord", "value": f"{discord_nick} (ID: `{discord_id}`)", "inline": True},
+                    {"name": "📅 OOC Wiek", "value": ooc_age, "inline": True},
+                    {"name": "⏰ Czas na grę", "value": ooc_time, "inline": True},
+                    {"name": "📖 Regulamin", "value": ooc_rules, "inline": True},
+                    {"name": "💼 Doświadczenie OOC", "value": ooc_exp, "inline": False},
+                    {"name": "📝 IC (Wiek / Tel)", "value": f"Wiek: {ic_age} | Tel: {ic_phone}", "inline": False},
+                    {"name": "💡 Poprzednie doświadczenie IC", "value": ic_exp, "inline": False},
+                    {"name": "👤 Opis postaci", "value": ic_desc, "inline": False},
+                    {"name": "❓ Dlaczego my?", "value": ic_why, "inline": False},
+                    {"name": "🎬 Sytuacja RP", "value": ic_situation, "inline": False}
+                ]
+            }
+        ]
+    }
 
-@app.route('/login', methods=['POST'])
-def login():
-    password = request.form.get('password')
-    if password == 'admin123':
-        session['is_admin'] = True
-    return redirect(request.referrer or url_for('index'))
+    # Wysłanie powiadomienia na Twój kanał Discord przez Webhook
+    if DISCORD_WEBHOOK_URL != 'https://discord.com/api/webhooks/TWOJ_WEBHOOK_ID/TWOJ_WEBHOOK_TOKEN':
+        try:
+            requests.post(DISCORD_WEBHOOK_URL, json=discord_message)
+        except Exception as e:
+            print(f"Błąd wysyłania na Discorda: {e}")
 
-@app.route('/logout')
-def logout():
-    session.pop('is_admin', None)
-    return redirect(request.referrer or url_for('index'))
+    return redirect(url_for('rekrutacja', success='true'))
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
