@@ -280,9 +280,9 @@ def submit_application():
     }
 
     # Wysłanie powiadomienia na Twój kanał Discord przez Webhook
-    if DISCORD_WEBHOOK_URL != 'https://discord.com/api/webhooks/TWOJ_WEBHOOK_ID/TWOJ_WEBHOOK_TOKEN':
+    if https://discord.com/api/webhooks/1543037930187006023/z2YORxjAm0lCune1Iu2RoJXyXC4Pc9xVTfbtlZqZzUKsThHz9wryR2YnWghQwueJQEWH != 'https://discord.com/api/webhooks/TWOJ_WEBHOOK_ID/TWOJ_WEBHOOK_TOKEN':
         try:
-            requests.post(DISCORD_WEBHOOK_URL, json=discord_message)
+            requests.post(https://discord.com/api/webhooks/1543037930187006023/z2YORxjAm0lCune1Iu2RoJXyXC4Pc9xVTfbtlZqZzUKsThHz9wryR2YnWghQwueJQEWH, json=discord_message)
         except Exception as e:
             print(f"Błąd wysyłania na Discorda: {e}")
 
