@@ -1,27 +1,27 @@
 from flask import Flask, render_template_string, request, redirect, url_for, session
 from datetime import datetime
 import os
+import json
 
 app = Flask(__name__)
 app.secret_key = 'la_dolce_vita_secret_key_997'
 
-reviews = [
-    {
-        "id": 1,
-        "name": "Marco V.",
-        "rating": 5,
-        "comment": "Najlepsza pizza w całym Los Santos! Prawdziwe włoskie ciasto.",
-        "date": "25 lutego 2026"
-    },
-    {
-        "id": 2,
-        "name": "Kamil GTA",
-        "rating": 5,
-        "comment": "Klimat super, jedzenie szybko podane.",
-        "date": "26 lutego 2026"
-    }
-]
+REVIEWS_FILE = 'reviews.json'
 
+def load_reviews():
+    if os.path.exists(REVIEWS_FILE):
+        try:
+            with open(REVIEWS_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception:
+            return []
+    return []
+
+def save_reviews(reviews_list):
+    with open(REVIEWS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(reviews_list, f, ensure_ascii=False, indent=4)
+
+reviews = load_reviews()
 applications = []
 
 HTML_TEMPLATE = """
@@ -299,22 +299,26 @@ HTML_TEMPLATE = """
         </div>
 
         <div class="reviews-grid">
-            {% for review in reviews %}
-            <div class="review-card">
-                <div class="review-header">
-                    <span class="review-author">{{ review.name }}</span>
-                    <span class="stars">{% for i in range(review.rating) %}★{% endfor %}</span>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">{{ review.name }}</span>
+                        <span class="stars">{% for i in range(review.rating) %}★{% endfor %}</span>
+                    </div>
+                    <p>{{ review.comment }}</p>
+                    <span class="review-date"><i class="fa-regular fa-calendar"></i> {{ review.date }}</span>
+                    
+                    {% if session.get('is_admin') %}
+                    <form action="/delete-review/{{ review.id }}" method="POST" style="margin-top: 10px;">
+                        <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Usuń opinię</button>
+                    </form>
+                    {% endif %}
                 </div>
-                <p>{{ review.comment }}</p>
-                <span class="review-date"><i class="fa-regular fa-calendar"></i> {{ review.date }}</span>
-                
-                {% if session.get('is_admin') %}
-                <form action="/delete-review/{{ review.id }}" method="POST" style="margin-top: 10px;">
-                    <button type="submit" class="delete-btn"><i class="fa-solid fa-trash"></i> Usuń opinię</button>
-                </form>
-                {% endif %}
-            </div>
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                <p style="grid-column: 1 / -1; text-align: center; color: var(--gray);">Brak opinii. Bądź pierwszy i dodaj swoją!</p>
+            {% endif %}
         </div>
 
         <div class="form-container">
@@ -364,6 +368,8 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
+    global reviews
+    reviews = load_reviews()
     if reviews:
         total_score = sum(r['rating'] for r in reviews)
         avg_rating = round(total_score / len(reviews), 1)
@@ -418,15 +424,20 @@ def add_review():
     date_str = datetime.now().strftime("%d %B %Y")
     
     if name and comment:
+        global reviews
+        reviews = load_reviews()
         new_id = reviews[0]['id'] + 1 if reviews else 1
         reviews.insert(0, {"id": new_id, "name": name, "rating": rating, "comment": comment, "date": date_str})
+        save_reviews(reviews)
     return redirect(url_for('index') + '#opinie')
 
 @app.route('/delete-review/<int:review_id>', methods=['POST'])
 def delete_review(review_id):
     if session.get('is_admin'):
         global reviews
+        reviews = load_reviews()
         reviews = [r for r in reviews if r['id'] != review_id]
+        save_reviews(reviews)
     return redirect(url_for('index') + '#opinie')
 
 @app.route('/login', methods=['POST'])
